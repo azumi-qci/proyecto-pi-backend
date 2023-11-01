@@ -1,6 +1,8 @@
 const { Server } = require('socket.io');
 
-const io = new Server(3001, {
+const SOCKET_PORT = process.env.SOCKER_PORT || 3000;
+
+const io = new Server(SOCKET_PORT, {
   cors: {
     origin: '*',
   },
