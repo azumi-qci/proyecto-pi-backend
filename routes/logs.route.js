@@ -14,12 +14,10 @@ router.get('/get-doors', async (req, res) => {
   } catch (error) {
     console.warn(error);
 
-    return res
-      .json({
-        error: true,
-        message: 'An error ocurred in server',
-      })
-      .status(500);
+    return res.status(500).json({
+      error: true,
+      message: 'An error ocurred in server',
+    });
   }
 });
 
