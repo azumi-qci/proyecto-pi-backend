@@ -1,11 +1,14 @@
-const { Server } = require('socket.io');
+const io = require('./sockets');
+const express = require('express');
 
-const io = new Server(3000, {
-  cors: {
-    origin: '*',
-  },
+const app = express();
+
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Hello world!',
+  });
 });
 
-io.on('connection', (socket) => {
-  console.log(`Connected client: ${socket.id}`);
+app.listen(3000, () => {
+  console.log('Express server running in the port 3000');
 });
