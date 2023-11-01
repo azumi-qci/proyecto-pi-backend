@@ -4,7 +4,7 @@ const morgan = require('morgan');
 
 const app = express();
 
-const logsRoute = require('./routes/logs.route');
+const doorsRoute = require('./routes/doors.route');
 const authRoute = require('./routes/auth.route');
 
 const PORT = process.env.PORT || 8080;
@@ -15,8 +15,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // Routes
-app.use('/api', logsRoute);
 app.use('/api/auth', authRoute);
+app.use('/api/doors', doorsRoute);
 
 // Base route
 app.get('/api', (req, res) => {

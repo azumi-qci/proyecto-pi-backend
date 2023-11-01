@@ -3,7 +3,7 @@ const router = require('express').Router();
 const io = require('../sockets');
 const db = require('../database');
 
-router.get('/get-doors', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const query = await db.query('SELECT * FROM doors');
 
