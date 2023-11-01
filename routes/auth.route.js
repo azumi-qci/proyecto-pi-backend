@@ -1,6 +1,9 @@
 const router = require('express').Router();
+const jwt = require('jsonwebtoken');
 
 const db = require('../database');
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -25,9 +28,18 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    const token = jwt.sign(
+      {
+        id: query[0].id,
+        email: query[0].email,
+        type: query[0].type,
+      },
+      JWT_SECRET
+    );
+
     return res.json({
       error: false,
-      content: query[0],
+      content: { ...query[0], token },
     });
   } catch {
     console.warn(error);
