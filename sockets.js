@@ -17,6 +17,10 @@ io.on('connection', (socket) => {
     }
     console.log(`The client ${socket.id} has joined the room door-${doorId}`);
   });
+
+  socket.on('disconnect', () => {
+    console.log(`Disconnected client: ${socket.id}`);
+  });
 });
 
 module.exports = io;
