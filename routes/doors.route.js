@@ -1,9 +1,10 @@
 const router = require('express').Router();
 
-const io = require('../sockets');
 const db = require('../database');
 
-router.get('/', async (req, res) => {
+const verifyToken = require('../helpers/verifyToken');
+
+router.get('/', verifyToken, async (req, res) => {
   try {
     const query = await db.query('SELECT * FROM doors');
 

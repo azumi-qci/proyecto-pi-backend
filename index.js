@@ -2,10 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
+const { verifyToken } = require('./helpers/verifyToken');
+
 const app = express();
 
-const doorsRoute = require('./routes/doors.route');
 const authRoute = require('./routes/auth.route');
+const doorsRoute = require('./routes/doors.route');
+const accessRoute = require('./routes/access.route');
 
 const PORT = process.env.PORT || 8080;
 
@@ -17,6 +20,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoute);
 app.use('/api/doors', doorsRoute);
+app.use('/api/access', accessRoute);
 
 // Base route
 app.get('/api', (req, res) => {
