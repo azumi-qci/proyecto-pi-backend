@@ -66,7 +66,7 @@ router.post('/:id', verifyToken, async (req, res) => {
   }
 
   try {
-    const query = await db.query(
+    await db.query(
       'INSERT INTO access VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, 0)',
       [
         name,

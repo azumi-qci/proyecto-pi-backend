@@ -15,6 +15,9 @@ io.on('connection', (socket) => {
     for (const room of socket.rooms) {
       socket.leave(room);
     }
+
+    socket.join(`door-${doorId}`);
+
     console.log(`The client ${socket.id} has joined the room door-${doorId}`);
   });
 
