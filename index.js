@@ -2,8 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
-const { verifyToken } = require('./helpers/verifyToken');
-
 const app = express();
 
 const authRoute = require('./routes/auth.route');

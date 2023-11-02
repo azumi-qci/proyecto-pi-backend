@@ -10,6 +10,13 @@ const io = new Server(SOCKET_PORT, {
 
 io.on('connection', (socket) => {
   console.log(`Connected client: ${socket.id}`);
+
+  socket.on('join-room', (doorId) => {
+    for (const room of socket.rooms) {
+      socket.leave(room);
+    }
+    console.log(`The client ${socket.id} has joined the room door-${doorId}`);
+  });
 });
 
 module.exports = io;
