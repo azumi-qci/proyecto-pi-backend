@@ -13,7 +13,7 @@ const verifyToken = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return res.status(500).json({
+    return res.status(401).json({
       error: true,
       message: 'Authentication header required',
     });
