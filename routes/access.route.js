@@ -138,6 +138,7 @@ router.put('/edit/:id', verifyToken, async (req, res) => {
     entrance_day,
     id_door,
     visit_location,
+    checked,
   } = req.body;
 
   if (
@@ -148,7 +149,8 @@ router.put('/edit/:id', verifyToken, async (req, res) => {
     !entrance_hour ||
     !entrance_day ||
     !id_door ||
-    !visit_location
+    !visit_location ||
+    isNaN(checked)
   ) {
     return res.status(422).json({
       error: true,
@@ -168,7 +170,8 @@ router.put('/edit/:id', verifyToken, async (req, res) => {
         entrance_hour = ?,
         entrance_day = ?,
         id_door = ?,
-        visit_location = ?
+        visit_location = ?,
+        checked = ?
       WHERE id = ?
     `,
       [
@@ -180,6 +183,7 @@ router.put('/edit/:id', verifyToken, async (req, res) => {
         entrance_day,
         id_door,
         visit_location,
+        checked,
         id,
       ]
     );
@@ -201,6 +205,7 @@ router.put('/edit/:id', verifyToken, async (req, res) => {
       entrance_day,
       id_door,
       visit_location,
+      checked,
     });
 
     return res.json({
