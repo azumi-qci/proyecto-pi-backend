@@ -18,7 +18,7 @@ router.get('/:id', verifyToken, async (req, res) => {
         car_color,
         car_plate,
         entrance_hour,
-        DATE_FORMAT(entrance_day, '%Y-%m-%d') as entrance_day,
+        DATE_FORMAT(entrance_day, '%d-%m-%Y') as entrance_day,
         id_door,
         visit_location,
         checked
