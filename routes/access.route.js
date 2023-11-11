@@ -22,7 +22,7 @@ router.get('/:id', verifyToken, async (req, res) => {
         id_door,
         visit_location,
         checked
-      FROM access WHERE id_door = ?`,
+      FROM access WHERE id_door = ? AND DATE(entrance_day) = curdate()`,
       [id]
     );
 
