@@ -19,13 +19,22 @@ const verifyToken = (req, res, next) => {
     });
   }
 
-  const token = authorization.split(' ')[1];
+  try {
+    const token = authorization.split(' ')[1];
 
-  const data = jwt.verify(token, JWT_SECRET);
+    const data = jwt.verify(token, JWT_SECRET);
 
-  req.user = data;
+    req.user = data;
 
-  next();
+    next();
+  } catch (error) {
+    console.warn(error);
+
+    res.status(401).json({
+      error: true,
+      message: 'Invalid authentication',
+    });
+  }
 };
 
 module.exports = verifyToken;

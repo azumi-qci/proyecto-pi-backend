@@ -217,4 +217,38 @@ router.put('/edit/:id', verifyToken, async (req, res) => {
   }
 });
 
+router.put('/check/:id_door/:id', verifyToken, async (req, res) => {
+  const { id, id_door } = req.params;
+
+  try {
+    const query = await db.query(
+      'UPDATE access SET checked = 1 WHERE id = ? AND id_door = ?',
+      [id, id_door]
+    );
+
+    if (query.affectedRows === 0) {
+      return res.status(404).json({
+        error: true,
+        message: 'The access log was not found',
+      });
+    }
+
+    io.to(`door-${id_door}`).emit('check-log', {
+      id: parseInt(id),
+    });
+
+    return res.json({
+      error: false,
+      message: 'The access log was checked successfully',
+    });
+  } catch (error) {
+    console.warn(error);
+
+    return res.status(500).json({
+      error: true,
+      message: 'An error ocurred in server',
+    });
+  }
+});
+
 module.exports = router;
