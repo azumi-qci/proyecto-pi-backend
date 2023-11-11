@@ -77,8 +77,8 @@ router.post('/:id', verifyToken, async (req, res) => {
   }
 
   try {
-    await db.query(
-      'INSERT INTO access VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, 0)',
+    const query = await db.query(
+      'INSERT INTO access VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, 0) RETURNING id',
       [
         name,
         car_brand,
@@ -92,6 +92,7 @@ router.post('/:id', verifyToken, async (req, res) => {
     );
 
     io.to(`door-${id}`).emit('add-log', {
+      id: query.id,
       name,
       car_brand,
       car_color,
