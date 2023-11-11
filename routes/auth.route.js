@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const db = require('../database');
 
+const verifyToken = require('../helpers/verifyToken');
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post('/login', async (req, res) => {
@@ -49,6 +51,17 @@ router.post('/login', async (req, res) => {
       message: 'An error ocurred in server',
     });
   }
+});
+
+router.get('/verify', verifyToken, async (req, res) => {
+  return res.json({
+    error: false,
+    content: {
+      id: req.user.id,
+      email: req.user.email,
+      type: req.user.type,
+    },
+  });
 });
 
 module.exports = router;
