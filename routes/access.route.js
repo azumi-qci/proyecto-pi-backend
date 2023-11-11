@@ -11,9 +11,20 @@ router.get('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const query = await db.query('SELECT * FROM access WHERE id_door = ?', [
-      id,
-    ]);
+    const query = await db.query(
+      `SELECT id,
+        name,
+        car_brand,
+        car_color,
+        car_plate,
+        entrance_hour,
+        DATE_FORMAT(entrance_day, '%Y-%m-%d') as entrance_day,
+        id_door,
+        visit_location,
+        checked
+      FROM access WHERE id_door = ?`,
+      [id]
+    );
 
     return res.json({
       error: false,
