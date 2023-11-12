@@ -4,6 +4,7 @@ const io = require('../sockets');
 const db = require('../database');
 
 const verifyToken = require('../helpers/verifyToken');
+const checkIfAdmin = require('../helpers/checkIfAdmin');
 
 const config = require('../config.json');
 
@@ -40,16 +41,8 @@ router.get('/:id', verifyToken, async (req, res) => {
   }
 });
 
-router.post('/:id', verifyToken, async (req, res) => {
+router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
   const { id } = req.params;
-  const { type } = req.user;
-
-  if (type !== config.ADMIN_LEVEL) {
-    return res.status(401).json({
-      error: true,
-      message: 'The user does not have the required priviligies',
-    });
-  }
 
   const {
     name,
@@ -118,16 +111,8 @@ router.post('/:id', verifyToken, async (req, res) => {
   }
 });
 
-router.put('/edit/:id', verifyToken, async (req, res) => {
+router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
   const { id } = req.params;
-  const { type } = req.user;
-
-  if (type !== config.ADMIN_LEVEL) {
-    return res.status(401).json({
-      error: true,
-      message: 'The user does not have the required priviligies',
-    });
-  }
 
   const {
     name,
@@ -222,6 +207,8 @@ router.put('/edit/:id', verifyToken, async (req, res) => {
   }
 });
 
+router.delete('/:id', verifyToken, checkIfAdmin, async (req, res) => {});
+
 router.put('/check/:id_door/:id', verifyToken, async (req, res) => {
   const { id, id_door } = req.params;
 
@@ -257,7 +244,7 @@ router.put('/check/:id_door/:id', verifyToken, async (req, res) => {
   }
 });
 
-router.delete('/check/:id_door/:id', verifyToken, async (req, res) => {
+router.put('/uncheck/:id_door/:id', verifyToken, async (req, res) => {
   const { id, id_door } = req.params;
 
   try {
