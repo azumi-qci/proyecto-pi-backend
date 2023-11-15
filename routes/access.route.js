@@ -78,16 +78,19 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
       ]
     );
 
-    io.to(`door-${id}`).emit('add-log', {
-      id: query.id,
-      name,
-      car_brand,
-      car_color,
-      car_plate,
-      access_daytime,
-      id_door: id,
-      visit_location,
-    });
+    // Check if the log is on the same day
+    if (new Date().toDateString() === new Date(access_daytime).toDateString) {
+      io.to(`door-${id}`).emit('add-log', {
+        id: query.id,
+        name,
+        car_brand,
+        car_color,
+        car_plate,
+        access_daytime,
+        id_door: id,
+        visit_location,
+      });
+    }
 
     return res.json({
       error: false,
