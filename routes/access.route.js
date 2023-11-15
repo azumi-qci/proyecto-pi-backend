@@ -16,11 +16,11 @@ router.get('/:id', verifyToken, async (req, res) => {
         car_brand,
         car_color,
         car_plate,
-        entrance_hour,
-        DATE_FORMAT(entrance_day, '%m-%d-%Y') as entrance_day,
+        access_daytime,
         id_door,
         visit_location
-      FROM access WHERE id_door = ? AND DATE(entrance_day) = curdate()`,
+      FROM access WHERE id_door = ? AND DATE(access_daytime) = CURDATE()
+      ORDER BY access_daytime DESC`,
       [id]
     );
 
@@ -46,8 +46,7 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     car_brand,
     car_color,
     car_plate,
-    entrance_hour,
-    entrance_day,
+    access_daytime,
     visit_location,
   } = req.body;
 
@@ -56,8 +55,7 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     !car_brand ||
     !car_color ||
     !car_plate ||
-    !entrance_hour ||
-    !entrance_day ||
+    !access_daytime ||
     !visit_location
   ) {
     return res.status(422).json({
@@ -68,14 +66,13 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
 
   try {
     const query = await db.query(
-      'INSERT INTO access VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id',
+      'INSERT INTO access VALUES (null, ?, ?, ?, ?, ?, ?, ?) RETURNING id',
       [
         name,
         car_brand,
         car_color,
         car_plate,
-        entrance_hour,
-        entrance_day,
+        access_daytime,
         parseInt(id),
         visit_location,
       ]
@@ -87,8 +84,7 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
       car_brand,
       car_color,
       car_plate,
-      entrance_hour,
-      entrance_day,
+      access_daytime,
       id_door: id,
       visit_location,
     });
@@ -115,8 +111,7 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     car_brand,
     car_color,
     car_plate,
-    entrance_hour,
-    entrance_day,
+    access_daytime,
     id_door,
     visit_location,
   } = req.body;
@@ -126,8 +121,7 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     !car_brand ||
     !car_color ||
     !car_plate ||
-    !entrance_hour ||
-    !entrance_day ||
+    !access_daytime ||
     !id_door ||
     !visit_location
   ) {
@@ -146,8 +140,7 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
         car_brand = ?,
         car_color = ?,
         car_plate = ?,
-        entrance_hour = ?,
-        entrance_day = ?,
+        access_daytime = ?,
         id_door = ?,
         visit_location = ?
       WHERE id = ?
@@ -157,8 +150,7 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
         car_brand,
         car_color,
         car_plate,
-        entrance_hour,
-        entrance_day,
+        access_daytime,
         id_door,
         visit_location,
         id,
@@ -178,8 +170,7 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
       car_brand,
       car_color,
       car_plate,
-      entrance_hour,
-      entrance_day,
+      access_daytime,
       id_door,
       visit_location,
     });
