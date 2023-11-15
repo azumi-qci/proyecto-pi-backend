@@ -6,8 +6,6 @@ const db = require('../database');
 const verifyToken = require('../helpers/verifyToken');
 const checkIfAdmin = require('../helpers/checkIfAdmin');
 
-const config = require('../config.json');
-
 router.get('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
 
@@ -70,7 +68,7 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
 
   try {
     const query = await db.query(
-      'INSERT INTO access VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, 0) RETURNING id',
+      'INSERT INTO access VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id',
       [
         name,
         car_brand,
@@ -78,7 +76,7 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
         car_plate,
         entrance_hour,
         entrance_day,
-        id,
+        parseInt(id),
         visit_location,
       ]
     );
