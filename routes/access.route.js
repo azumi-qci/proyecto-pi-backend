@@ -19,10 +19,9 @@ router.get('/:id', verifyToken, async (req, res) => {
         car_color,
         car_plate,
         entrance_hour,
-        DATE_FORMAT(entrance_day, '%d-%m-%Y') as entrance_day,
+        DATE_FORMAT(entrance_day, '%m-%d-%Y') as entrance_day,
         id_door,
-        visit_location,
-        checked
+        visit_location
       FROM access WHERE id_door = ? AND DATE(entrance_day) = curdate()`,
       [id]
     );
@@ -94,7 +93,6 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
       entrance_day,
       id_door: id,
       visit_location,
-      checked: 0,
     });
 
     return res.json({
@@ -123,7 +121,6 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     entrance_day,
     id_door,
     visit_location,
-    checked,
   } = req.body;
 
   if (
@@ -134,8 +131,7 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     !entrance_hour ||
     !entrance_day ||
     !id_door ||
-    !visit_location ||
-    isNaN(checked)
+    !visit_location
   ) {
     return res.status(422).json({
       error: true,
@@ -155,8 +151,7 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
         entrance_hour = ?,
         entrance_day = ?,
         id_door = ?,
-        visit_location = ?,
-        checked = ?
+        visit_location = ?
       WHERE id = ?
     `,
       [
@@ -168,7 +163,6 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
         entrance_day,
         id_door,
         visit_location,
-        checked,
         id,
       ]
     );
@@ -190,7 +184,6 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
       entrance_day,
       id_door,
       visit_location,
-      checked,
     });
 
     return res.json({
@@ -208,75 +201,5 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
 });
 
 router.delete('/:id', verifyToken, checkIfAdmin, async (req, res) => {});
-
-router.put('/check/:id_door/:id', verifyToken, async (req, res) => {
-  const { id, id_door } = req.params;
-
-  try {
-    const query = await db.query(
-      'UPDATE access SET checked = 1 WHERE id = ? AND id_door = ?',
-      [id, id_door]
-    );
-
-    if (query.affectedRows === 0) {
-      return res.status(404).json({
-        error: true,
-        message: 'The access log was not found',
-      });
-    }
-
-    io.to(`door-${id_door}`).emit('check-log', {
-      id: parseInt(id),
-      checked: true,
-    });
-
-    return res.json({
-      error: false,
-      message: 'The access log was checked successfully',
-    });
-  } catch (error) {
-    console.warn(error);
-
-    return res.status(500).json({
-      error: true,
-      message: 'An error ocurred in server',
-    });
-  }
-});
-
-router.put('/uncheck/:id_door/:id', verifyToken, async (req, res) => {
-  const { id, id_door } = req.params;
-
-  try {
-    const query = await db.query(
-      'UPDATE access SET checked = 0 WHERE id = ? AND id_door = ?',
-      [id, id_door]
-    );
-
-    if (query.affectedRows === 0) {
-      return res.status(404).json({
-        error: true,
-        message: 'The access log was not found',
-      });
-    }
-
-    io.to(`door-${id_door}`).emit('uncheck-log', {
-      id: parseInt(id),
-      checked: false,
-    });
-
-    return res.json({
-      error: false,
-      message: 'The access log was unchecked successfully',
-    });
-  } catch (error) {
-    console.warn(error);
-
-    return res.status(500).json({
-      error: true,
-      message: 'An error ocurred in server',
-    });
-  }
-});
 
 module.exports = router;
