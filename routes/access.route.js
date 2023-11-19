@@ -8,6 +8,7 @@ const checkIfAdmin = require('../helpers/checkIfAdmin');
 
 router.get('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
+  const { show_all } = req.query;
 
   try {
     const query = await db.query(
@@ -19,7 +20,9 @@ router.get('/:id', verifyToken, async (req, res) => {
         access_daytime,
         id_door,
         visit_location
-      FROM access WHERE id_door = ? AND DATE(access_daytime) = CURDATE()
+      FROM access WHERE id_door = ? ${
+        !show_all ? 'AND DATE(access_daytime) = CURDATE()' : ''
+      }
       ORDER BY access_daytime DESC`,
       [id]
     );
