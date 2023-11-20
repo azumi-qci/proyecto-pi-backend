@@ -85,7 +85,7 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     // Check if the log is on the same day
     if (checkIfToday(access_daytime)) {
       io.to(`door-${id}`).emit('add-log', {
-        id: query.id,
+        id: query[0].id,
         name,
         car_brand,
         car_color,
