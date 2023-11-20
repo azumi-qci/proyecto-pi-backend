@@ -5,6 +5,7 @@ const db = require('../database');
 
 const verifyToken = require('../helpers/verifyToken');
 const checkIfAdmin = require('../helpers/checkIfAdmin');
+const checkIfToday = require('../helpers/checkIfToday');
 
 router.get('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
@@ -82,7 +83,7 @@ router.post('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     );
 
     // Check if the log is on the same day
-    if (new Date().toDateString() === new Date(access_daytime).toDateString) {
+    if (checkIfToday(access_daytime)) {
       io.to(`door-${id}`).emit('add-log', {
         id: query.id,
         name,
@@ -195,6 +196,40 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
   }
 });
 
-router.delete('/:id', verifyToken, checkIfAdmin, async (req, res) => {});
+router.delete('/:id', verifyToken, checkIfAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = await db.query(
+      `
+      DELETE FROM access
+      WHERE id = ?
+      RETURNING id_door
+    `,
+      [id]
+    );
+
+    if (!query[0]) {
+      return res.status(404).json({
+        error: true,
+        message: 'The access log was not found',
+      });
+    }
+
+    io.to(`door-${query[0].id_door}`).emit('delete-log', parseInt(id));
+
+    return res.json({
+      error: false,
+      message: 'The access log was deleted successfully',
+    });
+  } catch (error) {
+    console.warn(error);
+
+    return res.status(500).json({
+      error: true,
+      message: 'An error ocurred in server',
+    });
+  }
+});
 
 module.exports = router;
