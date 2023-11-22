@@ -7,6 +7,40 @@ const verifyToken = require('../helpers/verifyToken');
 const checkIfAdmin = require('../helpers/checkIfAdmin');
 const checkIfToday = require('../helpers/checkIfToday');
 
+router.get('/log/:id', verifyToken, checkIfAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = await db.query(
+      `
+      SELECT *
+      FROM access
+      WHERE id = ?
+      `,
+      [id]
+    );
+
+    if (!query[0]) {
+      return res.status(404).json({
+        error: true,
+        message: 'The access log was not found',
+      });
+    }
+
+    return res.json({
+      error: false,
+      content: query[0],
+    });
+  } catch (error) {
+    console.warn(error);
+
+    return res.status(500).json({
+      error: true,
+      message: 'An error ocurred in server',
+    });
+  }
+});
+
 router.get('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
   const { show_all } = req.query;
