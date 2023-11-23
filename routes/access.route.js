@@ -155,6 +155,7 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
     access_daytime,
     id_door,
     visit_location,
+    previous_id_door,
   } = req.body;
 
   if (
@@ -205,16 +206,33 @@ router.put('/:id', verifyToken, checkIfAdmin, async (req, res) => {
       });
     }
 
-    io.to(`door-${id_door}`).emit('update-log', {
-      id: parseInt(id),
-      name,
-      car_brand,
-      car_color,
-      car_plate,
-      access_daytime,
-      id_door,
-      visit_location,
-    });
+    if (!previous_id_door) {
+      // The door did not changed
+      io.to(`door-${id_door}`).emit('update-log', {
+        id: parseInt(id),
+        name,
+        car_brand,
+        car_color,
+        car_plate,
+        access_daytime,
+        id_door,
+        visit_location,
+      });
+    } else {
+      // The door changed
+      io.to(`door-${id_door}`).emit('add-log', {
+        id: parseInt(id),
+        name,
+        car_brand,
+        car_color,
+        car_plate,
+        access_daytime,
+        id_door,
+        visit_location,
+      });
+
+      io.to(`door-${previous_id_door}`).emit('delete-log', parseInt(id));
+    }
 
     return res.json({
       error: false,
